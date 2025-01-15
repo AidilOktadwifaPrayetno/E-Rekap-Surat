@@ -1,0 +1,251 @@
+/* Global Style */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Layout */
+.dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-bottom: 1px solid #34495e;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu li {
+    width: 100%;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: #ecf0f1;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.menu li a:hover {
+    background-color: #34495e;
+}
+
+.menu li a i {
+    margin-right: 10px;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #ecf0f1;
+    overflow-y: auto;
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+/* Table Styles */
+.table-container {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    margin-top: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left; /* Tengahkan isi tabel */
+}
+
+table th, table td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center; /* Tengahkan isi dan judul tabel */
+}
+
+table th {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+table td {
+    color: #2c3e50;
+}
+
+.active {
+    background-color: #34495e;
+}
+
+/* Button Styles */
+.actions {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between; /* Menyusun tombol dan form di kedua sisi */
+    align-items: center;
+    gap: 20px; /* Memberikan jarak antara tombol dan form */
+}
+
+.actions .btn-primary, .btn-edit, .btn-delete, .btn-success {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.btn-edit {
+    background-color: #f1c40f;
+}
+
+.btn-edit:hover {
+    background-color: #d4ac0d;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+.btn-success {
+    background-color: #2ecc71;
+}
+
+.btn-success:hover {
+    background-color: #02fe5a;
+}
+
+/* ------------- Filter ------------------ */
+input, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #2c3e50;
+    outline: none;
+    width: 100%; /* Default width */
+    box-sizing: border-box; /* Untuk memastikan padding dihitung dalam width */
+    max-width: 300px; /* Batas lebar elemen */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Search Form */
+.search-form {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px; /* Memberikan jarak antara input dan tombol */
+}
+
+.search-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #2c3e50;
+    outline: none;
+    width: 250px; /* Lebar input agar lebih seimbang */
+}
+
+.search-form button {
+    padding: 10px 15px;
+    background-color: #3498db;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background-color: #2980b9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 15px;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+
+    .actions .btn-primary,
+    .actions .btn-edit,
+    .actions .btn-delete,
+    .actions .btn-success {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+
+    .search-form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-form input {
+        width: 100%; /* Full width on mobile */
+    }
+}

@@ -1,0 +1,110 @@
+/* Global Styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url("../images/padang.jpg");
+    background-size: cover;
+}
+
+/* Login Box Styling */
+.login-box {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Title Styling */
+.login-box h1 {
+    font-size: 1.5rem;
+    color: #2c3e50; /* Same color scheme as admin dashboard */
+    margin-bottom: 10px;
+}
+
+.login-box h2 {
+    font-size: 1.2rem;
+    color: #7f8c8d; /* Subtle text for secondary titles */
+    margin-bottom: 20px;
+}
+
+/* Input Fields */
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+    margin-left: -10px;
+}
+
+.login-box input:focus {
+    border-color: #3498db; /* Highlight input on focus */
+}
+
+/* Login Button */
+.login-box button {
+    background-color: #3498db; /* Primary button color */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.login-box button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Links Section */
+.login-links {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.login-links a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+/* Logo Styling */
+.login-logo {
+    width: 120px; /* Ukuran logo */
+    height: auto; /* Menjaga proporsi */
+    margin: 20px auto; /* Memberi jarak antara elemen */
+    display: block; /* Menjadikan gambar berada di tengah */
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-box {
+        padding: 20px;
+    }
+
+    .login-box h1 {
+        font-size: 1.2rem;
+    }
+
+    .login-box h2 {
+        font-size: 1rem;
+    }
+}
