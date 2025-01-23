@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] != 'admin')) {
 }
 
 $id = $_GET['id'];
-$result = mysqli_query($conn, "SELECT * FROM users WHERE id = $id AND role IN ('petugas', 'ketua')");
+$result = mysqli_query($conn, "SELECT * FROM users WHERE id = $id AND role IN ('petugas', 'monitor')");
 $petugas = mysqli_fetch_assoc($result);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -19,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Check if password is not empty, if not, update password
     if (!empty($password)) {
-        $query = "UPDATE users SET nama_lengkap = '$nama_lengkap', username = '$username', password = '$password' WHERE id = $id AND role IN ('petugas', 'ketua')";
+        $query = "UPDATE users SET nama_lengkap = '$nama_lengkap', username = '$username', password = '$password' WHERE id = $id AND role IN ('petugas', 'monitor')";
     } else {
         // If password is empty, update without changing password
-        $query = "UPDATE users SET nama_lengkap = '$nama_lengkap', username = '$username' WHERE id = $id AND role IN ('petugas', 'ketua')";
+        $query = "UPDATE users SET nama_lengkap = '$nama_lengkap', username = '$username' WHERE id = $id AND role IN ('petugas', 'monitor')";
     }
 
     if (mysqli_query($conn, $query)) {
@@ -84,8 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <ul class="menu">
                 <li><a href="dashboard_admin.php"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="spt.php"><i class="fas fa-file-alt"></i> SPT</a></li>
-                <li><a href="karyawan.php"><i class="fas fa-users"></i> Karyawan</a></li>
-                <li><a href="petugas.php" class="active"><i class="fas fa-user-shield"></i> Petugas & Ketua</a></li>
+                <li><a href="karyawan.php"><i class="fas fa-users"></i> Pelaksana Tugas</a></li>
+                <li><a href="petugas.php" class="active"><i class="fas fa-user-shield"></i> Petugas </a></li>
+                <li><a href="jabatan.php"><i class="fas fa-user-shield"></i> Jabatan </a></li>
                 <li><a href="profile.php"><i class="fas fa-user-circle"></i> Profile</a></li>
                 <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>

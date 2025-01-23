@@ -3,7 +3,7 @@ include '../includes/db_connect.php';
 session_start();
 
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'ketua') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'monitor') {
     header('Location: ../login.php');
     exit;
 }
@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'ketua') {
 $user_id = $_SESSION['user_id']; // Ambil ID ketua dari session
 
 // Ambil data ketua berdasarkan ID
-$result = mysqli_query($conn, "SELECT * FROM users WHERE id = '$user_id' AND role = 'ketua'");
+$result = mysqli_query($conn, "SELECT * FROM users WHERE id = '$user_id' AND role = 'monitor'");
 if (!$result || mysqli_num_rows($result) == 0) {
     echo "Data ketua tidak ditemukan.";
     exit();

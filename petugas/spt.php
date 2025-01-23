@@ -166,7 +166,7 @@ $result = mysqli_stmt_get_result($stmt);
                                 </option>
                             <?php } ?>
                         </select>
-                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari nama karyawan, keterangan, tanggal...">
+                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari nama Pelaksana, keterangan, tanggal...">
                         
                         <button type="submit"><i class="fas fa-search"></i> Cari</button>
                     </form>
@@ -176,7 +176,7 @@ $result = mysqli_stmt_get_result($stmt);
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Karyawan</th>
+                                <th>Nama Pelaksana</th>
                                 <th>Nama Petugas</th>
                                 <th>Tanggal Pergi</th>
                                 <th>Tanggal Pulang</th>

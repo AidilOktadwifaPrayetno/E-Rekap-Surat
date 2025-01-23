@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
     exit;
 }
 
-// Get the search keyword if available
+// Get the search keyword
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 // Pagination setup
@@ -16,26 +16,31 @@ $limit = 10;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// Query to fetch karyawan data with search functionality and pagination
+// Fetch karyawan data with jabatan join and pagination
+$query = "SELECT k.*, j.nama_jabatan 
+          FROM karyawan k 
+          LEFT JOIN jabatan j ON k.jabatan_id = j.id ";
 if (!empty($search)) {
-    $result = mysqli_query($conn, "SELECT * FROM karyawan WHERE nama_lengkap LIKE '%$search%' ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
-} else {
-    $result = mysqli_query($conn, "SELECT * FROM karyawan ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
+    $query .= "WHERE k.nama_lengkap LIKE '%$search%' ";
 }
+$query .= "ORDER BY k.nama_lengkap ASC LIMIT $offset, $limit";
+$result = mysqli_query($conn, $query);
 
-// Count total records
+// Count total records for pagination
 $count_stmt = mysqli_query($conn, "SELECT COUNT(*) AS total FROM karyawan");
 if ($count_row = mysqli_fetch_assoc($count_stmt)) {
     $total_records = $count_row['total'];
     $total_pages = ceil($total_records / $limit);
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Karyawan</title>
+    <title>Data Pelaksana Tugas</title>
     <link rel="stylesheet" href="../assets/css/all.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4C+Xv2wU8W6vFJXD4RoKxR95ERIVnvBoG6M0KVE60JXAOFLnUBp8R/bcS7y7zFsh0B5AA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -82,23 +87,24 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
             <ul class="menu">
                 <li><a href="dashboard_admin.php"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="spt.php"><i class="fas fa-file-alt"></i> SPT</a></li>
-                <li><a href="karyawan.php" class="active"><i class="fas fa-users"></i> Karyawan</a></li>
-                <li><a href="petugas.php"><i class="fas fa-user-shield"></i> Petugas & Ketua</a></li>
+                <li><a href="karyawan.php" class="active"><i class="fas fa-users"></i> Pelaksana Tugas</a></li>
+                <li><a href="petugas.php"><i class="fas fa-user-shield"></i> Petugas</a></li>
+                <li><a href="jabatan.php"><i class="fas fa-user-shield"></i> Jabatan </a></li>
                 <li><a href="profile.php"><i class="fas fa-user-circle"></i> Profile</a></li>
                 <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </aside>
         <main class="main-content">
             <header>
-                <h1>Daftar Karyawan</h1>
-                <p>Berikut adalah daftar karyawan yang terdaftar dalam sistem.</p>
+                <h1>Daftar Pelaksana Tugas</h1>
+                <p>Berikut adalah daftar Pelaksana Tugas yang terdaftar dalam sistem.</p>
             </header>
             <section class="content-data-karyawan">
                 <div class="actions">
-                    <a href="tambah_karyawan.php" class="btn-primary"><i class="fas fa-plus"></i> Tambah Karyawan</a>
+                    <a href="tambah_karyawan.php" class="btn-primary"><i class="fas fa-plus"></i> Tambah Pelaksana </a>
                     <!-- Search Form -->
                     <form method="get" action="" class="search-form">
-                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari nama Karyawan...">
+                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari nama Pelaksana Tugas...">
                         <button type="submit"><i class="fas fa-search"></i> Cari</button>
                     </form>
                 </div>
@@ -108,7 +114,8 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
                             <tr>
                                 <th>No</th>
                                 <th>Nama Lengkap</th>
-                                <th>Nomor Handphone</th>
+                                <th>No HP</th>
+                                <th>Jabatan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -116,11 +123,12 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
                             <?php $no = 1; while ($row = mysqli_fetch_assoc($result)) { ?>
                                 <tr>
                                     <td><?php echo $no++; ?></td>
-                                    <td><?php echo $row['nama_lengkap']; ?></td>
-                                    <td><?php echo $row['no_hp']; ?></td>
+                                    <td><?php echo htmlspecialchars($row['nama_lengkap']); ?></td>
+                                    <td><?php echo empty($row['no_hp']) || $row['no_hp'] == '0' ? '-' : htmlspecialchars($row['no_hp']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['nama_jabatan']); ?></td>
                                     <td>
-                                        <a href="edit_karyawan.php?id=<?php echo $row['id']; ?>" class="btn-edit"><i class="fas fa-edit"></i> Edit</a>
-                                        <a href="#" class="btn-delete" onclick="confirmDelete(<?php echo $row['id']; ?>)"><i class="fas fa-trash"></i> Delete</a>
+                                        <a href="edit_karyawan.php?id=<?php echo $row['id']; ?>" class="btn-edit">Edit</a>
+                                        <a href="#" class="btn-delete" onclick="confirmDelete(<?php echo $row['id']; ?>)">Hapus</a>
                                         <script>
                                             function confirmDelete(id) {
                                                 Swal.fire({
@@ -141,12 +149,12 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
                                         </script>
                                     </td>
                                 </tr>
-                                <?php } ?>
-                                <?php if (mysqli_num_rows($result) == 0) { ?>
-                                    <tr>
-                                        <td colspan="4" style="text-align: center;">Karyawan tidak ditemukan.</td>
-                                    </tr>
-                                <?php } ?>
+                            <?php } ?>
+                            <?php if (mysqli_num_rows($result) == 0) { ?>
+                                <tr>
+                                    <td colspan="5">Data tidak ditemukan.</td>
+                                </tr>
+                            <?php } ?>
                         </tbody>
                     </table>
                 </div>

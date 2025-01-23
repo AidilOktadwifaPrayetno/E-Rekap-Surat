@@ -1,17 +1,23 @@
 <?php
 include '../includes/db_connect.php';
 session_start();
-// Check if the buyer is logged in
+
+// Check if the admin is logged in
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
     header('Location: ../login.php');
     exit;
 }
 
+// Fetch all jabatan for the dropdown
+$jabatan_result = mysqli_query($conn, "SELECT * FROM jabatan ORDER BY nama_jabatan ASC");
+
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama_lengkap = $_POST['nama_lengkap'];
     $no_hp = $_POST['no_hp'];
+    $jabatan_id = $_POST['jabatan_id'];
 
-    $query = "INSERT INTO karyawan (nama_lengkap, no_hp) VALUES ('$nama_lengkap', '$no_hp')";
+    $query = "INSERT INTO karyawan (nama_lengkap, no_hp, jabatan_id) VALUES ('$nama_lengkap', '$no_hp', $jabatan_id)";
     if (mysqli_query($conn, $query)) {
         echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -29,13 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </script>";
     } else {
         echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    title: 'Gagal!',
-                    text: 'Gagal menambahkan karyawan. Silakan coba lagi.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
+            Swal.fire({
+                title: 'Gagal!',
+                text: 'Gagal menambahkan karyawan. Silakan coba lagi.',
+                icon: 'error',
+                confirmButtonText: 'OK'
             });
         </script>";
     }
@@ -47,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Karyawan</title>
+    <title>Tambah Pelaksana Tugas</title>
     <link rel="stylesheet" href="../assets/css/karyawan.css">
     <link rel="stylesheet" href="../assets/css/all.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4C+Xv2wU8W6vFJXD4RoKxR95ERIVnvBoG6M0KVE60JXAOFLnUBp8R/bcS7y7zFsh0B5AA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -72,31 +76,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <ul class="menu">
                 <li><a href="dashboard_admin.php"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="spt.php"><i class="fas fa-file-alt"></i> SPT</a></li>
-                <li><a href="karyawan.php" class="active"><i class="fas fa-users"></i> Karyawan</a></li>
-                <li><a href="petugas.php"><i class="fas fa-user-shield"></i> Petugas & Ketua</a></li>
+                <li><a href="karyawan.php" class="active"><i class="fas fa-users"></i> Pelaksana Tugas</a></li>
+                <li><a href="petugas.php"><i class="fas fa-user-shield"></i> Petugas </a></li>
+                <li><a href="jabatan.php"><i class="fas fa-user-shield"></i> Jabatan </a></li>
                 <li><a href="profile.php"><i class="fas fa-user-circle"></i> Profile</a></li>
                 <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </aside>
         <main class="main-content">
             <header>
-                <h1>Tambah Karyawan</h1>
-                <p>Silakan isi data karyawan yang ingin ditambahkan ke dalam sistem.</p>
+                <h1>Tambah Pelaksana Tugas</h1>
+                <p>Silakan isi data Pelaksana Tugas yang ingin ditambahkan ke dalam sistem.</p>
             </header>
             <section class="content-tambah-karyawan">
                 <div class="form-container">
-                    <form action="" method="POST">
+                    <form method="post" action="">
+                        <h1>Tambah Karyawan</h1>
                         <div class="form-group">
                             <label for="nama_lengkap">Nama Lengkap</label>
-                            <input type="text" id="nama_lengkap" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
+                            <input type="text" id="nama_lengkap" name="nama_lengkap" required>
                         </div>
                         <div class="form-group">
-                            <label for="no_hp">Nomor Handphone</label>
-                            <input type="tel" id="no_hp" name="no_hp" placeholder="Masukkan nomor handphone" required>
+                            <label for="no_hp">No HP</label>
+                            <input type="text" id="no_hp" name="no_hp" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="jabatan">Jabatan</label>
+                            <select id="jabatan" name="jabatan_id" required>
+                                <option value="">Pilih Jabatan</option>
+                                <?php while ($jabatan_row = mysqli_fetch_assoc($jabatan_result)) { ?>
+                                    <option value="<?php echo $jabatan_row['id']; ?>">
+                                        <?php echo htmlspecialchars($jabatan_row['nama_jabatan']); ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Simpan</button>
-                            <a href="karyawan.php" class="btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
+                            <a href="petugas.php" class="btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
                         </div>
                     </form>
                 </div>

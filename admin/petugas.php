@@ -18,13 +18,13 @@ $offset = ($page - 1) * $limit;
 
 // Query to fetch petugas data with search functionality and pagination
 if (!empty($search)) {
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE role IN ('petugas', 'ketua') AND nama_lengkap LIKE '%$search%' ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE role IN ('petugas', 'monitor') AND nama_lengkap LIKE '%$search%' ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
 } else {
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE role IN ('petugas', 'ketua') ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE role IN ('petugas', 'monitor') ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
 }
 
 // Count total records
-$count_stmt = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE role IN ('petugas', 'ketua')");
+$count_stmt = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE role IN ('petugas', 'monitor')");
 if ($count_row = mysqli_fetch_assoc($count_stmt)) {
     $total_records = $count_row['total'];
     $total_pages = ceil($total_records / $limit);
@@ -35,7 +35,7 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Petugas dan Ketua</title>
+    <title>Data Petugas </title>
     <link rel="stylesheet" href="../assets/css/all.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4C+Xv2wU8W6vFJXD4RoKxR95ERIVnvBoG6M0KVE60JXAOFLnUBp8R/bcS7y7zFsh0B5AA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -82,16 +82,17 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
             <ul class="menu">
                 <li><a href="dashboard_admin.php"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="spt.php"><i class="fas fa-file-alt"></i> SPT</a></li>
-                <li><a href="karyawan.php"><i class="fas fa-users"></i> Karyawan</a></li>
-                <li><a href="petugas.php" class="active"><i class="fas fa-user-shield"></i> Petugas & Ketua</a></li>
+                <li><a href="karyawan.php"><i class="fas fa-users"></i> Pelaksana Tugas </a></li>
+                <li><a href="petugas.php" class="active"><i class="fas fa-user-shield"></i> Petugas </a></li>
+                <li><a href="jabatan.php"><i class="fas fa-user-shield"></i> Jabatan </a></li>
                 <li><a href="profile.php"><i class="fas fa-user-circle"></i> Profile</a></li>
                 <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </aside>
         <main class="main-content">
             <header>
-                <h1>Daftar Petugas dan Ketua</h1>
-                <p>Berikut adalah daftar petugas dan ketua yang terdaftar dalam sistem.</p>
+                <h1>Daftar Petugas </h1>
+                <p>Berikut adalah daftar petugas  yang terdaftar dalam sistem.</p>
             </header>
             <section class="content-data-petugas">
                 <div class="actions">
@@ -146,7 +147,7 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
                                 <?php } ?>
                                 <?php if (mysqli_num_rows($result) == 0) { ?>
                                     <tr>
-                                        <td colspan="5" style="text-align: center;">Petugas atau ketua tidak ditemukan.</td>
+                                        <td colspan="5" style="text-align: center;">Petugas tidak ditemukan.</td>
                                     </tr>
                                 <?php } ?>
                         </tbody>

@@ -89,8 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <ul class="menu">
                 <li><a href="dashboard_admin.php"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="spt.php"><i class="fas fa-file-alt"></i> SPT</a></li>
-                <li><a href="karyawan.php"><i class="fas fa-users"></i> Karyawan</a></li>
-                <li><a href="petugas.php"><i class="fas fa-user-shield"></i> Petugas & Ketua</a></li>
+                <li><a href="karyawan.php"><i class="fas fa-users"></i>Pelaksana Tugas</a></li>
+                <li><a href="petugas.php"><i class="fas fa-user-shield"></i> Petugas </a></li>
+                <li><a href="jabatan.php"><i class="fas fa-user-shield"></i> Jabatan </a></li>
                 <li><a href="profile.php" class="active"><i class="fas fa-user-circle"></i> Profile</a></li>
                 <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>

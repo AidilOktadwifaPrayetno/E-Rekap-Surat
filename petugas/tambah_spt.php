@@ -132,6 +132,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             height: 100px;
             margin: 5px;
         }
+
+        .dropdown-menu {
+        position: absolute;
+        z-index: 1050;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: none;
+    }
+
+    .dropdown-item {
+        padding: 10px;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f5f5;
+    }
     </style>
 </head>
 <body>
@@ -156,8 +181,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <section class="content-spt">
                 <form action="" method="POST" class="form-container">
                     <div class="form-group">
-                        <label for="karyawan_nama">Nama Karyawan</label>
-                        <input type="text" name="karyawan_nama" id="karyawan_nama" placeholder="Masukkan nama karyawan" required>
+                        <label for="karyawan_nama">Nama Pelaksana Tugas</label>
+                        <input 
+                            type="text" 
+                            name="karyawan_nama" 
+                            id="karyawan_nama" 
+                            placeholder="Ketik nama karyawan" 
+                            autocomplete="off" 
+                            required>
+                        <ul id="karyawan_dropdown" class="dropdown-menu"></ul>
                         <input type="hidden" name="karyawan_id" id="karyawan_id"> <!-- ID disimpan di sini -->
                     </div>
                     <div class="form-group">
@@ -178,21 +210,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </form>
             </section>
+
         </main>
     </div>
 
      <!-- Script Autocomplete -->
-    <script>
-        $(function() {
-            $("#karyawan_nama").autocomplete({
-                source: "autocomplete.php", // Path ke API
-                minLength: 2, // Minimal 2 karakter sebelum autocomplete
-                select: function(event, ui) {
-                    // Ketika nama dipilih, simpan ID di input hidden
-                    $("#karyawan_id").val(ui.item.id);
+     <script>
+        $(document).ready(function () {
+            const $karyawanInput = $("#karyawan_nama");
+            const $dropdown = $("#karyawan_dropdown");
+
+            // Fungsi untuk memuat dropdown
+            function loadDropdown(term = "") {
+                $.ajax({
+                    url: "autocomplete.php", // Path ke API
+                    method: "GET",
+                    data: { term: term },
+                    dataType: "json",
+                    success: function (data) {
+                        $dropdown.empty(); // Kosongkan dropdown sebelumnya
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                $dropdown.append(
+                                    `<li class="dropdown-item" data-id="${item.id}">${item.label}</li>`
+                                );
+                            });
+                            $dropdown.show();
+                        } else {
+                            $dropdown.hide();
+                        }
+                    },
+                    error: function () {
+                        console.error("Gagal memuat data karyawan.");
+                    }
+                });
+            }
+
+            // Tampilkan semua nama ketika input kosong
+            $karyawanInput.on("focus", function () {
+                if ($(this).val() === "") {
+                    loadDropdown();
+                }
+            });
+
+            // Filter nama saat mengetik
+            $karyawanInput.on("input", function () {
+                const term = $(this).val();
+                loadDropdown(term);
+            });
+
+            // Pilih nama dari dropdown
+            $dropdown.on("click", ".dropdown-item", function () {
+                const karyawanId = $(this).data("id");
+                const karyawanNama = $(this).text();
+
+                $("#karyawan_id").val(karyawanId); // Simpan ID di hidden input
+                $karyawanInput.val(karyawanNama); // Tampilkan nama di input
+                $dropdown.hide(); // Sembunyikan dropdown
+            });
+
+            // Sembunyikan dropdown jika klik di luar elemen
+            $(document).on("click", function (e) {
+                if (!$(e.target).closest(".form-group").length) {
+                    $dropdown.hide();
                 }
             });
         });
     </script>
+
+
 </body>
 </html>

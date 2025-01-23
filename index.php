@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: admin/dashboard_admin.php');
         } elseif ($user['role'] == 'petugas') {
             header('Location: petugas/dashboard_petugas.php');
-        } elseif ($user['role'] == 'ketua') {
+        } elseif ($user['role'] == 'monitor') {
             header('Location: ketua/dashboard_ketua.php');
         }
     } else {
