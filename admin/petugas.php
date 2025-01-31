@@ -17,19 +17,29 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Query to fetch petugas data with search functionality and pagination
+$query = "SELECT * FROM users WHERE role IN ('petugas', 'monitor')";
 if (!empty($search)) {
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE role IN ('petugas', 'monitor') AND nama_lengkap LIKE '%$search%' ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
-} else {
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE role IN ('petugas', 'monitor') ORDER BY nama_lengkap ASC LIMIT $offset, $limit");
+    $query .= " AND (nama_lengkap LIKE '%$search%' OR username LIKE '%$search%' OR role LIKE '%$search%')";
 }
+$query .= " ORDER BY nama_lengkap ASC LIMIT $offset, $limit";
+
+$result = mysqli_query($conn, $query);
 
 // Count total records
-$count_stmt = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE role IN ('petugas', 'monitor')");
+$count_query = "SELECT COUNT(*) AS total FROM users WHERE role IN ('petugas', 'monitor')";
+if (!empty($search)) {
+    $count_query .= " AND (nama_lengkap LIKE '%$search%' OR username LIKE '%$search%' OR role LIKE '%$search%')";
+}
+$count_stmt = mysqli_query($conn, $count_query);
 if ($count_row = mysqli_fetch_assoc($count_stmt)) {
     $total_records = $count_row['total'];
     $total_pages = ceil($total_records / $limit);
 }
 ?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -154,10 +164,16 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
                     </table>
                 </div>
                 <div class="pagination">
-                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                        <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>" class="<?php echo ($i == $page) ? 'active' : ''; ?>">
-                            <?php echo $i; ?>
-                        </a>
+                    <?php if ($page > 1) { ?>
+                        <a href="?page=1&search=<?php echo urlencode($search); ?>">&laquo; First</a>
+                        <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>">&laquo; Prev</a>
+                    <?php } ?>
+                    
+                    <a href="?page=<?php echo $page; ?>&search=<?php echo urlencode($search); ?>" class="active"><?php echo $page; ?></a>
+                    
+                    <?php if ($page < $total_pages) { ?>
+                        <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>">Next &raquo;</a>
+                        <a href="?page=<?php echo $total_pages; ?>&search=<?php echo urlencode($search); ?>">Last &raquo;</a>
                     <?php } ?>
                 </div>
             </section>

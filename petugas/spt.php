@@ -238,10 +238,16 @@ $result = mysqli_stmt_get_result($stmt);
                     </table>
                 </div>
                 <div class="pagination">
-                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                        <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&filter_month=<?php echo $filter_month; ?>&filter_year=<?php echo $filter_year; ?>" class="<?php echo ($i == $page) ? 'active' : ''; ?>">
-                            <?php echo $i; ?>
-                        </a>
+                    <?php if ($page > 1) { ?>
+                        <a href="?page=1&search=<?php echo urlencode($search); ?>">&laquo; First</a>
+                        <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>">&laquo; Prev</a>
+                    <?php } ?>
+                    
+                    <a href="?page=<?php echo $page; ?>&search=<?php echo urlencode($search); ?>" class="active"><?php echo $page; ?></a>
+                    
+                    <?php if ($page < $total_pages) { ?>
+                        <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>">Next &raquo;</a>
+                        <a href="?page=<?php echo $total_pages; ?>&search=<?php echo urlencode($search); ?>">Last &raquo;</a>
                     <?php } ?>
                 </div>
             </section>
