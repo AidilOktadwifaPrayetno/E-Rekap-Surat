@@ -21,6 +21,10 @@ $querySPT = "SELECT COUNT(*) AS total FROM spt";
 $resultSPT = mysqli_query($conn, $querySPT);
 $totalSPT = mysqli_fetch_assoc($resultSPT)['total'];
 
+$queryJabatan = "SELECT COUNT(*) AS total FROM jabatan";
+$resultJabatan = mysqli_query($conn, $queryJabatan);
+$totalJabatan = mysqli_fetch_assoc($resultJabatan)['total'];
+
 // Periksa apakah user sudah login
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../index.php');
@@ -88,6 +92,11 @@ unset($_SESSION['login_success']);
             </header>
             <section class="content">
                 <div class="card">
+                    <h3>SPT</h3>
+                    <p>Jumlah SPT: <span class="count"><?php echo $totalSPT; ?></span></p>
+                    <a href="spt.php" class="btn-primary">Lihat SPT</a>
+                </div>
+                <div class="card">
                     <h3>Manage Pelaksana Tugas</h3>
                     <p>Jumlah Pelaksana Tugas: <span class="count"><?php echo $totalKaryawan; ?></span></p>
                     <a href="karyawan.php" class="btn-primary">Kelola Karyawan</a>
@@ -98,9 +107,9 @@ unset($_SESSION['login_success']);
                     <a href="petugas.php" class="btn-primary">Kelola Petugas</a>
                 </div>
                 <div class="card">
-                    <h3>SPT</h3>
-                    <p>Jumlah SPT: <span class="count"><?php echo $totalSPT; ?></span></p>
-                    <a href="spt.php" class="btn-primary">Lihat SPT</a>
+                    <h3>Jabatan</h3>
+                    <p>Jumlah Jabatan: <span class="count"><?php echo $totalJabatan; ?></span></p>
+                    <a href="jabatan.php" class="btn-primary">Lihat Jabatan</a>
                 </div>
                 <div class="card">
                     <h3>Profil</h3>

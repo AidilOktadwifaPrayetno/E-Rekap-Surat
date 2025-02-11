@@ -64,7 +64,7 @@ $result = mysqli_query($conn, $query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data SPT</title>
-    <link rel="stylesheet" href="../assets/css/spt_petugas.css">
+    <link rel="stylesheet" href="../assets/css/spt.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4C+Xv2wU8W6vFJXD4RoKxR95ERIVnvBoG6M0KVE60JXAOFLnUBp8R/bcS7y7zFsh0B5AA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .pagination { display: flex; justify-content: center; margin: 20px 0; }
@@ -100,28 +100,33 @@ $result = mysqli_query($conn, $query);
                 <h1>Daftar Surat Perintah Tugas (SPT)</h1>
                 <p>Data seluruh Surat Perintah Tugas (SPT) yang terdaftar di sistem.</p>
             </header>
-            <section class="content-spt">
-                <form method="get" action="" class="search-form">
-                    <select name="filter_month">
-                        <option value="">Pilih Bulan</option>
-                        <?php for ($m = 1; $m <= 12; $m++) { ?>
-                            <option value="<?php echo $m; ?>" <?php echo ($filter_month == $m) ? 'selected' : ''; ?>>
-                                <?php echo date('F', mktime(0, 0, 0, $m, 10)); ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                    <select name="filter_year">
-                        <option value="">Pilih Tahun</option>
-                        <?php for ($y = date('Y') - 5; $y <= date('Y'); $y++) { ?>
-                            <option value="<?php echo $y; ?>" <?php echo ($filter_year == $y) ? 'selected' : ''; ?>>
-                                <?php echo $y; ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                    <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari nama karyawan, nama petugas, tanggal pergi, tanggal pulang, keterangan...">
-                    
-                    <button type="submit"><i class="fas fa-search"></i> Cari</button>
-                </form>
+            <section class="content">
+            <div class="actions">
+                    <a href="../export_spt.php?search=<?php echo urlencode($search); ?>&filter_month=<?php echo $filter_month; ?>&filter_year=<?php echo $filter_year; ?>" class="btn-primary">
+                        <i class="fas fa-file-excel"></i> Export ke Excel
+                    </a>
+                    <form method="get" action="" class="search-form">
+                        <select name="filter_month">
+                            <option value="">Pilih Bulan</option>
+                            <?php for ($m = 1; $m <= 12; $m++) { ?>
+                                <option value="<?php echo $m; ?>" <?php echo ($filter_month == $m) ? 'selected' : ''; ?>>
+                                    <?php echo date('F', mktime(0, 0, 0, $m, 10)); ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                        <select name="filter_year">
+                            <option value="">Pilih Tahun</option>
+                            <?php for ($y = date('Y') - 5; $y <= date('Y'); $y++) { ?>
+                                <option value="<?php echo $y; ?>" <?php echo ($filter_year == $y) ? 'selected' : ''; ?>>
+                                    <?php echo $y; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari nama Pelaksana, keterangan, tanggal...">
+                        
+                        <button type="submit"><i class="fas fa-search"></i> Cari</button>
+                    </form>
+                </div>
 
                 <div class="table-container">
                     <table>

@@ -86,16 +86,7 @@ unset($_SESSION['login_success']);
                 <p>Selamat Datang di Dashboard Admin</p>
             </header>
             <section class="content">
-                <div class="card">
-                    <h3>Manage Karyawan</h3>
-                    <p>Jumlah Karyawan: <span class="count"><?php echo $totalKaryawan; ?></span></p>
-                    <a href="karyawan.php" class="btn-primary">Kelola Karyawan</a>
-                </div>
-                <div class="card">
-                    <h3>Manage Petugas</h3>
-                    <p>Jumlah Petugas: <span class="count"><?php echo $totalPetugas; ?></span></p>
-                    <a href="petugas.php" class="btn-primary">Kelola Petugas</a>
-                </div>
+                
                 <div class="card">
                     <h3>SPT</h3>
                     <p>Jumlah SPT: <span class="count"><?php echo $totalSPT; ?></span></p>
