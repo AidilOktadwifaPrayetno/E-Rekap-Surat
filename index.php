@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/login.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+     <!-- Favicon -->
+     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (<?php echo isset($_SESSION['login_message']) ? 'true' : 'false'; ?>) {

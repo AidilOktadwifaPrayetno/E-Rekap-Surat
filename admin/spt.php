@@ -66,6 +66,8 @@ $result = mysqli_query($conn, $query);
     <title>Data SPT</title>
     <link rel="stylesheet" href="../assets/css/spt.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4C+Xv2wU8W6vFJXD4RoKxR95ERIVnvBoG6M0KVE60JXAOFLnUBp8R/bcS7y7zFsh0B5AA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <style>
         .pagination { display: flex; justify-content: center; margin: 20px 0; }
         .pagination a { margin: 0 5px; padding: 10px 15px; border: 1px solid #ddd; border-radius: 5px; text-decoration: none; color: #333; transition: background-color 0.3s, color 0.3s; }
