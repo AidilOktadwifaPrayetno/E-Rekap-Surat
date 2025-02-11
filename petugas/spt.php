@@ -149,6 +149,9 @@ $result = mysqli_stmt_get_result($stmt);
             <section class="content">
                 <div class="actions">
                     <a href="tambah_spt.php" class="btn-primary"><i class="fas fa-plus"></i> Tambah SPT</a>
+                    <a href="../export_spt.php?search=<?php echo urlencode($search); ?>&filter_month=<?php echo $filter_month; ?>&filter_year=<?php echo $filter_year; ?>" class="btn-primary">
+                        <i class="fas fa-file-excel"></i> Export ke Excel
+                    </a>
                     <form method="get" action="" class="search-form">
                         <select name="filter_month">
                             <option value="">Pilih Bulan</option>
