@@ -25,7 +25,7 @@ echo "<script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
      <!-- Favicon -->
-     <link rel="icon" type="image/png" href="../assets/images/logo.png">
+     <link rel="icon" type="image/png" href="assets/images/logo.png">
     <style>
         .logout-container {
             display: flex;
