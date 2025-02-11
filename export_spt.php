@@ -71,7 +71,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 $writer = new Xlsx($spreadsheet);
-$filename = "Data_SPT_" . date('YmdHis') . ".xlsx";
+$filename = "Rekap_Surat_Perintah_Tugas_" . date('YmdHis') . ".xlsx";
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment; filename="' . $filename . '"');

@@ -123,7 +123,7 @@ $result = mysqli_query($conn, $query);
                         
                         <button type="submit"><i class="fas fa-search"></i> Cari</button>
                     </form>
-                    </div>
+                </div>
 
                 <div class="table-container">
                     <table>
