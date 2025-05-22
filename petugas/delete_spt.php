@@ -1,10 +1,15 @@
 <?php
 include '../includes/db_connect.php';
+
 session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'petugas') {
+    header("Location: ../logout.php");
+    exit;
+}
 
 // Check if the petugas is logged in
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'petugas') {
-    header('Location: ../login.php');
+    header('Location: ../index.php');
     exit;
 }
 

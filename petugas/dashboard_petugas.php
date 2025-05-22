@@ -1,16 +1,23 @@
 <?php
-include '../includes/db_connect.php';
-session_start();
-
-// Check if the buyer is logged in
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'petugas') {
-    header('Location: ../login.php');
-    exit;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Periksa apakah user sudah login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../index.php');
+// Cegah caching total
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+include '../includes/db_connect.php';
+
+// Cek login dan role
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'petugas') {
+    session_unset();
+    session_destroy();
+    echo "<script>
+        sessionStorage.setItem('session_expired', 'true');
+        window.location.href = '../index.php';
+    </script>";
     exit;
 }
 
@@ -20,6 +27,12 @@ $login_success = isset($_SESSION['login_success']) ? $_SESSION['login_success'] 
 // Hapus session login_success setelah ditampilkan
 unset($_SESSION['login_success']);
 
+// Ambil data nama lengkap pengguna yang sedang login
+$userId = $_SESSION['user_id'];
+$queryUser = "SELECT nama_lengkap FROM users WHERE id = $userId";
+$resultUser = mysqli_query($conn, $queryUser);
+$userData = mysqli_fetch_assoc($resultUser);
+$namaLengkap = $userData['nama_lengkap'];
 ?>
 
 <!DOCTYPE html>
@@ -28,16 +41,18 @@ unset($_SESSION['login_success']);
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Petugas</title>
-    <link rel="stylesheet" href="../assets/css/all.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
      <!-- Favicon -->
      <link rel="icon" type="image/png" href="../assets/images/logo.png">
-    <script>
+     <script>
         document.addEventListener('DOMContentLoaded', function() {
             <?php if ($login_success) { ?>
                 Swal.fire({
                     title: 'Login Berhasil!',
-                    text: "<?php echo $login_success; ?>",
+                    text: "Selamat datang, <?php echo htmlspecialchars($namaLengkap); ?>!",
                     icon: 'success',
                     confirmButtonText: 'OK'
                 });
@@ -54,11 +69,16 @@ unset($_SESSION['login_success']);
 
 </head>
 <body>
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
     <div class="dashboard">
         <aside class="sidebar">
-            <div class="sidebar-header">
+            <div class="sidebar-header" style="border-bottom: 1px solid #ccc; padding-bottom: 0.5px;">
                 <img src="../assets/images/logo.png" alt="Logo" class="logo">
-                <h2>Petugas Panel</h2>
+                <h5>DPRD <br>Provinsi Sumatera Barat</h5    >
+                <p>E-REKAP SPT</p>
             </div>
             <ul class="menu">
                 <li><a href="dashboard_petugas.php" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -70,7 +90,7 @@ unset($_SESSION['login_success']);
         <main class="main-content">
             <header>
                 <h1>Selamat Datang di Dashboard Petugas</h1>
-                <p>Gunakan menu di sebelah kiri untuk mengelola SPT.</p>
+                <p>Selamat Datang, <strong><?php echo htmlspecialchars($namaLengkap); ?></strong>! di Dashboard Petugas.</p>
             </header>
             <section class="content">
                 <div class="card">
@@ -86,5 +106,72 @@ unset($_SESSION['login_success']);
             </section>
         </main>
     </div>
-</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.querySelector('.sidebar');
+            const menuLinks = document.querySelectorAll('.menu a');
+            const toggleButton = document.querySelector('.toggle-btn');
+
+            // Fungsi untuk menutup sidebar dengan efek delay
+            function closeSidebar() {
+                setTimeout(function() {
+                    sidebar.classList.add('collapsed'); // Menambahkan kelas collapsed setelah delay
+                }, 300); // Delay 300ms (sama dengan durasi transisi)
+            }
+
+            // Tutup sidebar otomatis saat klik menu di layar kecil
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    // Pastikan sidebar tertutup saat klik menu pada layar kecil
+                    if (window.innerWidth < 768) {
+                        closeSidebar();
+                    }
+                });
+            });
+
+            // Toggle sidebar pada button toggle
+            toggleButton.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+            });
+
+            // Tutup sidebar secara default saat halaman pertama kali dimuat di mobile
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('collapsed');
+            }
+        });
+
+               // Blok tombol back
+history.pushState(null, null, location.href);
+window.addEventListener('popstate', function () {
+    history.pushState(null, null, location.href);
+    Swal.fire({
+        icon: 'warning',
+        title: 'Sesi Telah Berakhir!',
+        text: 'Silakan login kembali.',
+        confirmButtonText: 'Login'
+    }).then(() => {
+        window.location.href = '../index.php';
+    });
+});
+
+// Deteksi ketika kembali ke tab (tab visibility)
+document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+        fetch('../check_session.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'expired') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Sesi Anda Telah Berakhir',
+                        text: 'Silakan login kembali.',
+                        confirmButtonText: 'Login'
+                    }).then(() => {
+                        window.location.href = '../index.php';
+                    });
+                }
+            });
+    }
+});
+    </script>
 </html>

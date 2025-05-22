@@ -9,7 +9,7 @@ $query = "SELECT id, nama_lengkap FROM karyawan";
 if ($term !== "") {
     $query .= " WHERE nama_lengkap LIKE '%" . mysqli_real_escape_string($conn, $term) . "%'";
 }
-$query .= " LIMIT 5"; // Batasi hasil hanya 5 nama karyawan
+$query .= " LIMIT 100"; // Batasi hasil hanya 5 nama karyawan
 
 $result = mysqli_query($conn, $query);
 

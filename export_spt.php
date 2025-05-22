@@ -7,8 +7,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'petugas') {
-    header('Location: ../login.php');
+// Memastikan bahwa hanya pengguna dengan peran 'petugas', 'admin', atau 'ketua' yang dapat mengakses
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['petugas', 'admin', 'monitor'])) {
+    header('Location:    index.php');
     exit;
 }
 

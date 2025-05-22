@@ -1,10 +1,15 @@
 <?php
 include '../includes/db_connect.php';
+
 session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    header("Location: ../logout.php");
+    exit;
+}
 
 // Check if the user is logged in and has admin privileges
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
-    header('Location: ../login.php');
+    header('Location: ../index.php');
     exit;
 }
 

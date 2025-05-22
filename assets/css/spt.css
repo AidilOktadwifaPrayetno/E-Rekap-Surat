@@ -19,6 +19,12 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
 }
 
 .sidebar-header {
@@ -27,6 +33,15 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     border-bottom: 1px solid #34495e;
+}
+
+.sidebar-header .logo {
+    display: block;
+    margin: 0 auto 2px;
+}
+
+.sidebar-header h5 {
+    margin-top: 2px;
 }
 
 .menu {
@@ -85,12 +100,18 @@ table {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
+    table-layout: auto; /* Biarkan tabel menyesuaikan kontennya */
+    width: 100%; /* Pastikan tabel mengambil seluruh lebar container */
 }
 
 table th, table td {
     padding: 15px;
     border-bottom: 1px solid #ddd;
     text-align: center;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 table th {
@@ -98,6 +119,15 @@ table th {
     color: #ecf0f1;
     text-transform: uppercase;
     font-weight: bold;
+}
+
+table td {
+    word-wrap: break-word; /* Agar teks panjang terpecah */
+}
+
+table th:nth-child(2),
+table td:nth-child(2) {
+    width: 30%;
 }
 
 table tr:hover {
@@ -108,28 +138,50 @@ table tr:hover {
     background-color: #34495e;
 }
 
-/* Button Styles */
 .actions {
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
     margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .actions .buttons {
     display: flex;
-    gap: 10px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .actions .search-form {
     display: flex;
     gap: 10px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Tidak membungkus ke baris bawah */
     justify-content: flex-end;
+    overflow-x: auto; /* Kalau terlalu panjang di layar kecil */
 }
 
+.actions .search-form select,
+.actions .search-form input[type="text"],
+.actions .search-form button {
+    white-space: nowrap;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Jarak antara input dan tombol */
+}
+
+.input-group input[type="text"] {
+    flex: 1;
+    min-width: 200px;
+}
+
+.input-group button {
+    white-space: nowrap;
+}
 .btn-primary, .btn-edit, .btn-delete, .btn-success {
     text-decoration: none;
     padding: 10px 15px;
@@ -181,38 +233,195 @@ input, select {
     background-color: #2980b9;
 }
 
-/* Responsive Design */
+.button-container {
+    display: flex;
+    gap: 10px; /* jarak antar tombol */
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    flex-wrap: wrap; /* memungkinkan tombol turun baris */
+}
+
+.button-container a {
+    display: block;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Toggle Button */
+.toggle-btn {
+    position: relative;
+    top: 15px;
+    left: 15px;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1001;
+    display: none;
+}
+
+.toggle-btn i {
+    font-size: 18px;
+}
+
+
+/* Responsiveness */
 @media (max-width: 768px) {
     .dashboard {
         flex-direction: column;
     }
 
     .sidebar {
-        width: 100%;
+        /* width: 100%;
         height: auto;
-        padding: 15px;
+        padding: 15px; */
+        transform: translateX(0);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 1000;
     }
 
     .main-content {
         padding: 10px;
     }
 
+    .card {
+        min-width: 100%;
+    }
+
     .actions {
         flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .actions .buttons {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .actions {
+        flex-direction: column;
+        align-items: flex-start; /* Semua item rata kiri */
+    }
+
+    .actions .search-form {
+        justify-content: flex-start; /* tombol dan filter tetap kiri */
+        width: 100%; /* biar fleksibel */
+    }
+    .search-form {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* .search-form input {
+        width: 100%;
+    }
+
+    .search-form button {
+        width: 100%;
+    } */
+
+    .btn-primary,
+    .btn-edit,
+    .btn-delete,
+    .btn-success {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    table th,
+    table td {
+        padding: 10px;
+    }
+
+    .toggle-btn {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+
+
+@media (max-width: 576px) {
+    td:last-child {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    table td .btn-edit,
+    table td .btn-delete,
+    table td .btn-success {
+        width: 100%;
+        text-align: center;
+    }
+
+    .button-container {
+        flex-direction: column;
         align-items: stretch;
+    }
+
+    .button-container a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    table th,
+    table td {
+        font-size: 0.8rem;
+    }
+
+    .actions .search-form {
+        flex-direction: column;
     }
 
     .actions .buttons {
         flex-direction: column;
+        gap: 5px;
+    }
+
+    .search-form input,
+    .search-form button {
         width: 100%;
     }
 
-    .search-form {
+    .button-container {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .search-form input {
+    .button-container a {
         width: 100%;
+        text-align: center;
     }
 }

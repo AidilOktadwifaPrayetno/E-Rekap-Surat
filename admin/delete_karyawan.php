@@ -1,81 +1,84 @@
 <?php
 include '../includes/db_connect.php';
+
 session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    header("Location: ../logout.php");
+    exit;
+}
 
-// Check if the user is logged in and has admin privileges
+// Cek apakah user sudah login dan adalah admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
-    header('Location: ../login.php');
+    header('Location: ../index.php');
     exit;
 }
 
-$id = $_GET['id'];
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// First, delete any related records in the 'spt' table
-$sptQuery = "DELETE FROM spt WHERE karyawan_id = $id";
-if (!mysqli_query($conn, $sptQuery)) {
-    $errorMessage = mysqli_real_escape_string($conn, "Error: Sistem sedang bermasalah " . mysqli_error($conn));
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Gagal!',
-                text: '$errorMessage',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = 'karyawan.php';
-            });
-        });
-    </script>";
-    exit;
-}
+$alertType = '';
+$alertMessage = '';
+$alertTitle = '';
+$alertIcon = '';
+$redirectPage = 'karyawan.php';
 
-// Then, delete the karyawan from the 'karyawan' table
-$query = "DELETE FROM karyawan WHERE id = $id";
-if (mysqli_query($conn, $query)) {
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Berhasil!',
-                text: 'Data karyawan berhasil dihapus!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = 'karyawan.php';
-            });
-        });
-    </script>";
+// Cek apakah ID valid
+if ($id <= 0) {
+    $alertType = 'INVALID_ID';
+    $alertTitle = 'Error!';
+    $alertMessage = 'ID karyawan tidak valid.';
+    $alertIcon = 'error';
 } else {
-    $errorMessage = mysqli_real_escape_string($conn, "Error deleting karyawan: " . mysqli_error($conn));
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Gagal!',
-                text: '$errorMessage',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = 'karyawan.php';
-            });
-        });
-    </script>";
+    // Cek apakah karyawan masih terhubung ke data di SPT
+    $checkSpt = mysqli_query($conn, "SELECT 1 FROM spt WHERE karyawan_id = $id LIMIT 1");
+    if (mysqli_num_rows($checkSpt) > 0) {
+        $alertType = 'SPT_EXISTS';
+        $alertTitle = 'Gagal!';
+        $alertMessage = 'Tidak bisa menghapus karyawan karena masih memiliki data SPT.';
+        $alertIcon = 'warning';
+    } else {
+        // Lanjutkan hapus karyawan
+        $deleteQuery = "DELETE FROM karyawan WHERE id = $id";
+        if (mysqli_query($conn, $deleteQuery)) {
+            $alertType = 'SUCCESS';
+            $alertTitle = 'Berhasil!';
+            $alertMessage = 'Data karyawan berhasil dihapus!';
+            $alertIcon = 'success';
+        } else {
+            $alertType = 'FAILED';
+            $alertTitle = 'Gagal!';
+            $alertMessage = 'Terjadi kesalahan saat menghapus data.';
+            $alertIcon = 'error';
+        }
+    }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hapus Karyawan</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4C+Xv2wU8W6vFJXD4RoKxR95ERIVnvBoG6M0KVE60JXAOFLnUBp8R/bcS7y7zFsh0B5AA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-     <!-- Favicon -->
-     <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <!-- Custom Styles (Opsional) -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
 </head>
 <body>
-    <!-- This page handles deletion logic only -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: '<?= $alertTitle ?>',
+                text: '<?= $alertMessage ?>',
+                icon: '<?= $alertIcon ?>',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '<?= $redirectPage ?>';
+            });
+        });
+    </script>
 </body>
 </html>
