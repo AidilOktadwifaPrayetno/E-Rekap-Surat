@@ -33,6 +33,10 @@ $queryUser = "SELECT nama_lengkap FROM users WHERE id = $userId";
 $resultUser = mysqli_query($conn, $queryUser);
 $userData = mysqli_fetch_assoc($resultUser);
 $namaLengkap = $userData['nama_lengkap'];
+
+$querySPT = "SELECT COUNT(*) AS total FROM spt";
+$resultSPT = mysqli_query($conn, $querySPT);
+$totalSPT = mysqli_fetch_assoc($resultSPT)['total'];
 ?>
 
 <!DOCTYPE html>
@@ -95,6 +99,7 @@ $namaLengkap = $userData['nama_lengkap'];
             <section class="content">
                 <div class="card">
                     <h3>Data SPT</h3>
+                    <p>Jumlah SPT: <span class="count"><?php echo $totalSPT; ?></span></p>
                     <p>Kelola data SPT yang terdaftar di sistem.</p>
                     <a href="spt.php" class="btn-primary">Kelola SPT</a>
                 </div>

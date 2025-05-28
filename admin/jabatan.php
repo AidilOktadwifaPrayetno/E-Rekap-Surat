@@ -224,40 +224,98 @@ if ($count_row = mysqli_fetch_assoc($count_stmt)) {
             }
         });
 
-        
-        // Blok tombol back
-history.pushState(null, null, location.href);
-window.addEventListener('popstate', function () {
-    history.pushState(null, null, location.href);
-    Swal.fire({
-        icon: 'warning',
-        title: 'Sesi Telah Berakhir!',
-        text: 'Silakan login kembali.',
-        confirmButtonText: 'Login'
-    }).then(() => {
-        window.location.href = '../index.php';
-    });
-});
+            function handlePopState() {
+                history.pushState(null, null, location.href);
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sesi Telah Berakhir!',
+                    text: 'Silakan login kembali.',
+                    confirmButtonText: 'Login'
+                }).then(() => {
+                    window.location.href = '../index.php';
+                });
+            }
 
-// Deteksi ketika kembali ke tab (tab visibility)
-document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') {
-        fetch('../check_session.php')
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'expired') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Sesi Anda Telah Berakhir',
-                        text: 'Silakan login kembali.',
-                        confirmButtonText: 'Login'
-                    }).then(() => {
-                        window.location.href = '../index.php';
+            function handleVisibilityChange() {
+                if (document.visibilityState === 'visible') {
+                    fetch('../check_session.php')
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'expired') {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Sesi Anda Telah Berakhir',
+                                    text: 'Silakan login kembali.',
+                                    confirmButtonText: 'Login'
+                                }).then(() => {
+                                    window.location.href = '../index.php';
+                                });
+                            }
+                        });
+                }
+            }
+
+            window.addEventListener('popstate', handlePopState);
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+
+            function confirmDelete(id) {
+                // Nonaktifkan event listener SEBELUM swal muncul
+                window.removeEventListener('popstate', handlePopState);
+                document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+                Swal.fire({
+                    title: 'Hapus Jabatan',
+                    text: 'Yakin ingin menghapus Jabatan ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'delete_jabatan.php?id=' + id;
+                    } else {
+                        // Jika batal, aktifkan kembali listener
+                        window.addEventListener('popstate', handlePopState);
+                        document.addEventListener('visibilitychange', handleVisibilityChange);
+                    }
+                });
+            }
+
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const sidebar = document.querySelector('.sidebar');
+                const menuLinks = document.querySelectorAll('.menu a');
+                const toggleButton = document.querySelector('.toggle-btn');
+
+                function closeSidebar() {
+                    setTimeout(() => {
+                        sidebar.classList.add('collapsed');
+                    }, 300);
+                }
+
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        if (window.innerWidth < 768) {
+                            closeSidebar();
+                        }
                     });
+                });
+
+                toggleButton.addEventListener('click', function () {
+                    sidebar.classList.toggle('collapsed');
+                });
+
+                if (window.innerWidth < 768) {
+                    sidebar.classList.add('collapsed');
                 }
             });
-    }
-});
+
+            history.pushState(null, null, location.href);
+      
+        
+
     </script>
 </body>
 </html>

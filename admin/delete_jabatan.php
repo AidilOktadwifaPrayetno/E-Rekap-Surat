@@ -1,86 +1,97 @@
-<?php
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Cegah caching total
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 include '../includes/db_connect.php';
 
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../logout.php");
-    exit;
-}
-
-// Check if the user is logged in and has admin privileges
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
-    header('Location: ../index.php');
-    exit;
-}
-
-// Ambil ID jabatan dari parameter URL
-$id = $_GET['id'];
-
-// Cek apakah ID jabatan valid
-$result = mysqli_query($conn, "SELECT * FROM jabatan WHERE id = $id");
-if (mysqli_num_rows($result) == 0) {
+// Cek login dan role
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    session_unset();
+    session_destroy();
     echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Gagal!',
-                text: 'Data jabatan tidak ditemukan.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = 'jabatan.php';
-            });
-        });
+        sessionStorage.setItem('session_expired', 'true');
+        window.location.href = '../index.php';
     </script>";
     exit;
 }
 
-// Hapus jabatan dari tabel
-$query = "DELETE FROM jabatan WHERE id = $id";
-if (mysqli_query($conn, $query)) {
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Berhasil!',
-                text: 'Jabatan berhasil dihapus!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = 'jabatan.php';
-            });
-        });
-    </script>";
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+$alertTitle = '';
+$alertMessage = '';
+$alertIcon = '';
+$redirectPage = 'jabatan.php';
+
+// Validasi ID
+if ($id <= 0) {
+    $alertTitle = 'Gagal!';
+    $alertMessage = 'ID jabatan tidak valid.';
+    $alertIcon = 'error';
 } else {
-    $errorMessage = mysqli_real_escape_string($conn, "Error: " . mysqli_error($conn));
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Gagal!',
-                text: 'Gagal menghapus jabatan. $errorMessage',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = 'jabatan.php';
-            });
-        });
-    </script>";
+    // Cek apakah jabatan ada di database
+    $checkJabatan = mysqli_query($conn, "SELECT * FROM jabatan WHERE id = $id");
+    if (mysqli_num_rows($checkJabatan) == 0) {
+        $alertTitle = 'Gagal!';
+        $alertMessage = 'Data jabatan tidak ditemukan.';
+        $alertIcon = 'error';
+    } else {
+        // Cek apakah jabatan masih digunakan oleh karyawan
+        $checkRelation = mysqli_query($conn, "SELECT 1 FROM karyawan WHERE jabatan_id = $id LIMIT 1");
+        if (!$checkRelation) {
+            die('Query error: ' . mysqli_error($conn));
+        }
+
+        if (mysqli_num_rows($checkRelation) > 0) {
+            $alertTitle = 'Gagal!';
+            $alertMessage = 'Jabatan tidak bisa dihapus karena masih digunakan oleh pelaksana tugas.';
+            $alertIcon = 'warning';
+        } else {
+            // Proses hapus jabatan
+            $delete = mysqli_query($conn, "DELETE FROM jabatan WHERE id = $id");
+            if ($delete) {
+                $alertTitle = 'Berhasil!';
+                $alertMessage = 'Jabatan berhasil dihapus!';
+                $alertIcon = 'success';
+            } else {
+                $alertTitle = 'Gagal!';
+                $alertMessage = 'Gagal menghapus jabatan: ' . mysqli_error($conn);
+                $alertIcon = 'error';
+            }
+        }
+    }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hapus Jabatan</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4C+Xv2wU8W6vFJXD4RoKxR95ERIVnvBoG6M0KVE60JXAOFLnUBp8R/bcS7y7zFsh0B5AA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-     <!-- Favicon -->
-     <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
 </head>
 <body>
-    <!-- This page handles deletion logic only -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: '<?= $alertTitle ?>',
+                text: '<?= $alertMessage ?>',
+                icon: '<?= $alertIcon ?>',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '<?= $redirectPage ?>';
+            });
+        });
+    </script>
 </body>
 </html>

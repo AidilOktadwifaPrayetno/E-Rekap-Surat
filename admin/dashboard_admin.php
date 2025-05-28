@@ -134,12 +134,12 @@ unset($_SESSION['login_success']);
                     <a href="spt.php" class="btn-primary">Lihat SPT</a>
                 </div>
                 <div class="card">
-                    <h3>Manage Pelaksana Tugas</h3>
+                    <h3> Pelaksana Tugas</h3>
                     <p>Jumlah Pelaksana Tugas: <span class="count"><?php echo $totalKaryawan; ?></span></p>
                     <a href="karyawan.php" class="btn-primary">Kelola Karyawan</a>
                 </div>
                 <div class="card">
-                    <h3>Manage Petugas</h3>
+                    <h3>Petugas</h3>
                     <p>Jumlah Petugas: <span class="count"><?php echo $totalPetugas; ?></span></p>
                     <a href="petugas.php" class="btn-primary">Kelola Petugas</a>
                 </div>

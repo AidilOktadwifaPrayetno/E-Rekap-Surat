@@ -1,18 +1,25 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Cegah caching total
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 include '../includes/db_connect.php';
 
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../logout.php");
+// Cek login dan role
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    session_unset();
+    session_destroy();
+    echo "<script>
+        sessionStorage.setItem('session_expired', 'true');
+        window.location.href = '../index.php';
+    </script>";
     exit;
 }
-
-// Cek apakah user sudah login dan adalah admin
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
-    header('Location: ../index.php');
-    exit;
-}
-
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 $alertType = '';
